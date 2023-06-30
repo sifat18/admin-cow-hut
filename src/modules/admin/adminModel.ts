@@ -38,7 +38,17 @@ export const adminSchema = new Schema<IAdmin, AdminModel>(
     },
   }
 );
-// check for duplicate
+adminSchema.statics.isAdminExist = async function (
+  phoneNumber: number
+): Promise<IAdmin | null> {
+  return await Admin.findOne({ phoneNumber });
+};
+adminSchema.statics.isPasswordMatched = async function (
+  givenPassword: string,
+  savedPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(givenPassword, savedPassword);
+};
 adminSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(
     this.password,

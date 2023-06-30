@@ -9,4 +9,11 @@ export type IAdmin = {
   phoneNumber: number;
   address: string;
 };
-export type AdminModel = Model<IAdmin, Record<string, unknown>>;
+export type AdminModel = {
+  isAdminExist(phoneNumber: number): Promise<IAdmin>;
+  isPasswordMatched(
+    givenPassword: string,
+    savedPassword: string
+  ): Promise<boolean>;
+} & Model<IAdmin>;
+// export type AdminModel = Model<IAdmin, Record<string, unknown>>;
