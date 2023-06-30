@@ -1,7 +1,8 @@
 import { Schema, model } from "mongoose";
 import { roles } from "./userConstant";
 import { IUser, UserModel } from "./userInterface";
-
+import bcrypt from "bcrypt";
+import config from "../../config";
 export const userSchema = new Schema<IUser, UserModel>(
   {
     name: {
@@ -40,12 +41,11 @@ export const userSchema = new Schema<IUser, UserModel>(
 );
 // check for duplicate
 userSchema.pre("save", async function (next) {
-  const isExist = await User.findOne({
-    phoneNumber: this.phoneNumber,
-  });
-  if (isExist) {
-    next();
-  }
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bycrypt_salt_rounds)
+  );
+  next();
 });
 
 export const User = model<IUser, UserModel>("User", userSchema);

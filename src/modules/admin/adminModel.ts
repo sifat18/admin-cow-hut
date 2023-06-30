@@ -1,6 +1,8 @@
 import { Schema, model } from "mongoose";
 import { AdminModel, IAdmin } from "./adminInterafce";
 import { Admin_ROLE } from "./adminConstant";
+import config from "../../config";
+import bcrypt from "bcrypt";
 
 export const adminSchema = new Schema<IAdmin, AdminModel>(
   {
@@ -38,12 +40,11 @@ export const adminSchema = new Schema<IAdmin, AdminModel>(
 );
 // check for duplicate
 adminSchema.pre("save", async function (next) {
-  const isExist = await Admin.findOne({
-    phoneNumber: this.phoneNumber,
-  });
-  if (isExist) {
-    next();
-  }
+  this.password = await bcrypt.hash(
+    this.password,
+    Number(config.bycrypt_salt_rounds)
+  );
+  next();
 });
 
 export const Admin = model<IAdmin, AdminModel>("Admin", adminSchema);

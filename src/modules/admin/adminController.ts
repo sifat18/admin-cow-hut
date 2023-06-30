@@ -8,11 +8,17 @@ export const createAdmin: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { ...adminData } = req.body;
     const result = await createAdminService(adminData);
-    reponseFormat<IAdmin>(res, {
+    // const { password, ...data } = result;
+    let dataWithoutPass;
+    if (result) {
+      const { password, ...rest } = result;
+      dataWithoutPass = rest;
+    }
+    reponseFormat<Partial<IAdmin>>(res, {
       success: true,
       statusCode: 200,
       message: "Admin created successfully !",
-      data: result,
+      data: dataWithoutPass,
     });
   }
 );
