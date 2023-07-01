@@ -13,4 +13,10 @@ export type IUser = {
   budget?: number;
   income?: number;
 };
-export type UserModel = Model<IUser, Record<string, unknown>>;
+export type UserModel = {
+  isUserExist(phoneNumber: number): Promise<IUser>;
+  isPasswordMatched(
+    givenPassword: string,
+    savedPassword: string
+  ): Promise<boolean>;
+} & Model<IUser>;

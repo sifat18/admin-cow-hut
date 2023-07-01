@@ -34,8 +34,6 @@ export const loginService = async (
   if (!isAdminExist) {
     throw new APIError(404, "Admin does not exist");
   }
-  console.log({ isAdminExist });
-  console.log({ payload });
 
   if (
     isAdminExist.password &&

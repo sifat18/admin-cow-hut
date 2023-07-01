@@ -39,7 +39,17 @@ export const userSchema = new Schema<IUser, UserModel>(
     },
   }
 );
-// check for duplicate
+userSchema.statics.isUserExist = async function (
+  phoneNumber: number
+): Promise<IUser | null> {
+  return await User.findOne({ phoneNumber });
+};
+userSchema.statics.isPasswordMatched = async function (
+  givenPassword: string,
+  savedPassword: string
+): Promise<boolean> {
+  return await bcrypt.compare(givenPassword, savedPassword);
+};
 userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(
     this.password,

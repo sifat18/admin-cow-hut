@@ -16,7 +16,7 @@ export const createAdmin: RequestHandler = catchAsync(
       const { password, ...rest } = result;
       dataWithoutPass = rest;
     }
-    reponseFormat<Partial<IAdmin>>(res, {
+    reponseFormat<Omit<IAdmin, "password">>(res, {
       success: true,
       statusCode: 200,
       message: "Admin created successfully !",
@@ -40,7 +40,7 @@ export const loginAdmin: RequestHandler = catchAsync(
     reponseFormat<ILoginUserResponse>(res, {
       success: true,
       statusCode: 200,
-      message: "Admin created successfully !",
+      message: "User logged in successfully !",
       data: others,
     });
   }
