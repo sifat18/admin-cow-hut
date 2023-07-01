@@ -6,13 +6,19 @@ import {
   getSingleCow,
   updateCow,
 } from "./cowController";
+import auth from "../../middlewears/auth";
+import { Admin_ROLE } from "../admin/adminConstant";
 
 const router = express.Router();
 
-router.post("/cows", createCow);
-router.get("/cows", getAllCows);
-router.get("/cows/:id", getSingleCow);
-router.patch("/cows/:id", updateCow);
-router.delete("/cows/:id", deleteCow);
+router.post("/cows", auth("seller"), createCow);
+router.get("/cows", auth("seller", "buyer", Admin_ROLE.ADMIN), getAllCows);
+router.get(
+  "/cows/:id",
+  auth("seller", "buyer", Admin_ROLE.ADMIN),
+  getSingleCow
+);
+router.patch("/cows/:id", auth("seller"), updateCow);
+router.delete("/cows/:id", auth("seller"), deleteCow);
 
 export const CowRoutes = router;

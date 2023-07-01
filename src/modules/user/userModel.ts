@@ -28,7 +28,7 @@ export const userSchema = new Schema<IUser, UserModel>(
       required: true,
     },
     password: { type: String, required: true },
-    phoneNumber: { type: Number, required: true, unique: true },
+    phoneNumber: { type: String, required: true, unique: true },
     budget: { type: Number },
     income: { type: Number },
   },

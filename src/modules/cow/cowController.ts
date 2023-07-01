@@ -12,6 +12,8 @@ import {
 import { pick } from "../../shared/pick";
 import { cowFilterableFields } from "./cowConstant";
 import { paginationFields } from "../../shared/paginationFields";
+import APIError from "../../errorHelpers/APIError";
+import mongoose from "mongoose";
 // create
 export const createCow: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
@@ -58,6 +60,18 @@ export const getSingleCow = catchAsync(async (req: Request, res: Response) => {
 // update
 export const updateCow = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  // -------------------
+  let userIdAsObjecId = new mongoose.Types.ObjectId(req.user?._id);
+  // console.log(i);
+  const getCow = await getSingleCowService(id);
+  const { seller } = getCow;
+
+  if (!seller.equals(userIdAsObjecId)) {
+    throw new APIError(403, "Forbidden");
+  }
+  // -----------------
+
   const updatedData = req.body;
 
   const result = await updateCowService(id, updatedData);
@@ -72,6 +86,17 @@ export const updateCow = catchAsync(async (req: Request, res: Response) => {
 // delete
 export const deleteCow = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
+
+  // -------------------
+  let userIdAsObjecId = new mongoose.Types.ObjectId(req.user?._id);
+  // console.log(i);
+  const getCow = await getSingleCowService(id);
+  const { seller } = getCow;
+
+  if (!seller.equals(userIdAsObjecId)) {
+    throw new APIError(403, "Forbidden");
+  }
+  // -----------------
 
   const result = await deleteCowService(id);
 

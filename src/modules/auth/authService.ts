@@ -73,7 +73,6 @@ export const getRefreshTokenService = async (
   //verify token
   // invalid token - synchronous
   let verifiedToken = null;
-  console.log({ token });
   try {
     verifiedToken = verifyToken(token, config.jwt.refresh_secret as Secret);
   } catch (err) {
@@ -82,7 +81,6 @@ export const getRefreshTokenService = async (
 
   const { phoneNumber } = verifiedToken;
 
-  // tumi delete hye gso  kintu tumar refresh token ase
   // checking deleted user's refresh token
 
   const isUserExist = await User.isUserExist(phoneNumber);

@@ -43,14 +43,14 @@ export const globalErrorHandler: ErrorRequestHandler = (
     statusCode = simplifiedError.statusCode;
     message = simplifiedError.message;
     errorMessages = simplifiedError.errorMessages;
-  } else if (err instanceof Error) {
-    message = err?.message;
-    errorMessages = err?.message ? [{ path: "", message: err?.message }] : [];
   } else if (err instanceof APIError) {
     statusCode = err?.statusCode;
     message = err?.message;
     errorMessages = err?.message ? [{ path: "", message: err?.message }] : [];
     stack = err?.stack;
+  } else if (err instanceof Error) {
+    message = err?.message;
+    errorMessages = err?.message ? [{ path: "", message: err?.message }] : [];
   }
 
   res.status(statusCode).json({
