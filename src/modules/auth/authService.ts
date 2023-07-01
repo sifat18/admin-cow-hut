@@ -1,8 +1,12 @@
 import { Secret } from "jsonwebtoken";
 import config from "../../config";
 import APIError from "../../errorHelpers/APIError";
-import { ILoginUser, ILoginUserResponse } from "../../interfaces/login";
-import { createToken } from "../../shared/jwtHelper";
+import {
+  ILoginUser,
+  ILoginUserResponse,
+  IRefreshTokenResponse,
+} from "../../interfaces/login";
+import { createToken, verifyToken } from "../../shared/jwtHelper";
 import { IUser } from "../user/userInterface";
 import { User } from "../user/userModel";
 
@@ -28,10 +32,6 @@ export const loginUserService = async (
   payload: ILoginUser
 ): Promise<ILoginUserResponse> => {
   const { phoneNumber, password } = payload;
-  // creating instance of User
-  // const user = new User();
-  //  // access to our instance methods
-  //   const isUserExist = await user.isUserExist(id);
 
   const isUserExist = await User.isUserExist(phoneNumber);
 
@@ -50,13 +50,13 @@ export const loginUserService = async (
 
   const { _id, role } = isUserExist;
   const accessToken = createToken(
-    { _id, role },
+    { _id, role, phoneNumber },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string
   );
 
   const refreshToken = createToken(
-    { _id, role },
+    { _id, role, phoneNumber },
     config.jwt.refresh_secret as Secret,
     config.jwt.refresh_expires_in as string
   );
@@ -64,5 +64,44 @@ export const loginUserService = async (
   return {
     accessToken,
     refreshToken,
+  };
+};
+// getrefresh
+export const getRefreshTokenService = async (
+  token: string
+): Promise<IRefreshTokenResponse> => {
+  //verify token
+  // invalid token - synchronous
+  let verifiedToken = null;
+  console.log({ token });
+  try {
+    verifiedToken = verifyToken(token, config.jwt.refresh_secret as Secret);
+  } catch (err) {
+    throw new APIError(403, "Invalid Refresh Token");
+  }
+
+  const { phoneNumber } = verifiedToken;
+
+  // tumi delete hye gso  kintu tumar refresh token ase
+  // checking deleted user's refresh token
+
+  const isUserExist = await User.isUserExist(phoneNumber);
+  if (!isUserExist) {
+    throw new APIError(404, "User does not exist");
+  }
+  //generate new token
+
+  const newAccessToken = createToken(
+    {
+      _id: isUserExist._id,
+      role: isUserExist.role,
+      phoneNumber: isUserExist.phoneNumber,
+    },
+    config.jwt.secret as Secret,
+    config.jwt.expires_in as string
+  );
+
+  return {
+    accessToken: newAccessToken,
   };
 };

@@ -29,7 +29,7 @@ export const adminSchema = new Schema<IAdmin, AdminModel>(
       required: true,
     },
     password: { type: String, required: true },
-    phoneNumber: { type: Number, required: true, unique: true },
+    phoneNumber: { type: String, required: true, unique: true },
   },
   {
     timestamps: true,

@@ -46,7 +46,7 @@ export const loginService = async (
 
   const { _id, role } = isAdminExist;
   const accessToken = createToken(
-    { _id, role },
+    { _id, role, phoneNumber },
     config.jwt.secret as Secret,
     config.jwt.expires_in as string
   );

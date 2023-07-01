@@ -8,7 +8,7 @@ export type IUser = {
   name: UserName;
   role: "seller" | "buyer";
   password: string;
-  phoneNumber: number;
+  phoneNumber: string;
   address: string;
   budget?: number;
   income?: number;

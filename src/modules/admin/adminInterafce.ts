@@ -6,7 +6,7 @@ export type IAdmin = {
   name: UserName;
   role: Admin_ROLE.ADMIN;
   password: string;
-  phoneNumber: number;
+  phoneNumber: string;
   address: string;
 };
 export type AdminModel = {
