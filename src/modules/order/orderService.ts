@@ -6,6 +6,7 @@ import { IOrder } from "./orderInterface";
 import APIError from "../../errorHelpers/APIError";
 import { User } from "../user/userModel";
 import { Order } from "./orderModel";
+import { JwtPayload } from "jsonwebtoken";
 
 export const createOrderService = async (
   data: IOrder
@@ -101,8 +102,51 @@ export const createOrderService = async (
   return newOrderAllData;
 };
 // get alll
-export const getAllOrderService = async (): Promise<IOrder[] | null> => {
-  const result = await Order.find({}).populate(["cow", "buyer"]);
+export const getAllOrderService = async (
+  user: JwtPayload | null
+): Promise<IOrder[] | undefined> => {
+  let result;
+  let userIdAsObjecId = new mongoose.Types.ObjectId(user?._id);
+  //  for admin
+  if (user?.role === "admin") {
+    result = await Order.find({}).populate(["cow", "buyer"]);
+  }
+  // for buyer
+  else if (user?.role === "buyer") {
+    const exists = await Order.aggregate([
+      { $match: { buyer: userIdAsObjecId } },
+      {
+        $lookup: {
+          from: "cows",
+          localField: "cow",
+          foreignField: "_id",
+          as: "cowData",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "buyer",
+          foreignField: "_id",
+          as: "buyerData",
+        },
+      },
+    ]);
+
+    result = exists?.length > 0 ? exists : [];
+  }
+  // for seller
+  else if (user?.role === "seller") {
+    const orders = await Order.find({}).populate({
+      path: "cow",
+      match: { seller: userIdAsObjecId },
+      populate: {
+        path: "seller",
+      },
+    });
+
+    result = orders.filter((order) => order.cow !== null);
+  }
 
   return result;
 };
