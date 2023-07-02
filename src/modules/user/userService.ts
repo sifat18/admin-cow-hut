@@ -2,6 +2,8 @@ import mongoose from "mongoose";
 import APIError from "../../errorHelpers/APIError";
 import { IUser } from "./userInterface";
 import { User } from "./userModel";
+import bcrypt from "bcrypt";
+import config from "../../config";
 
 // getting all
 export const getAllUserService = async (): Promise<IUser[] | null> => {
@@ -29,10 +31,15 @@ export const updateUserService = async (
     throw new APIError(404, "User not found !");
   }
 
-  const { name, ...userData } = payload;
-
+  const { name, password, ...userData } = payload;
+  let hashPas;
+  if (password) {
+    hashPas = await bcrypt.hash(password, Number(config.bycrypt_salt_rounds));
+  }
   const updatedUserData: Partial<IUser> = { ...userData };
-
+  if (hashPas) {
+    updatedUserData["password"] = hashPas;
+  }
   // dynamically handling
 
   if (name && Object.keys(name).length > 0) {
