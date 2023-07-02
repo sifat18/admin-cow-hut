@@ -120,7 +120,7 @@ export const getAllOrderService = async (
           from: "cows",
           localField: "cow",
           foreignField: "_id",
-          as: "cowData",
+          as: "cow",
         },
       },
       {
@@ -128,7 +128,32 @@ export const getAllOrderService = async (
           from: "users",
           localField: "buyer",
           foreignField: "_id",
-          as: "buyerData",
+          as: "buyer",
+        },
+      },
+      {
+        $addFields: {
+          cow: { $arrayElemAt: ["$cow", 0] },
+          buyer: { $arrayElemAt: ["$buyer", 0] },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "cow.seller",
+          foreignField: "_id",
+          as: "cow.seller",
+        },
+      },
+      {
+        $addFields: {
+          "cow.seller": { $arrayElemAt: ["$cow.seller", 0] },
+        },
+      },
+      {
+        $project: {
+          "buyer.password": 0,
+          "cow.seller.password": 0,
         },
       },
     ]);
