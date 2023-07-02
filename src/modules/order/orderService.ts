@@ -183,3 +183,13 @@ export const getAllOrderService = async (
 
   return result;
 };
+// single
+export const getSingleOrderService = async (
+  id: string,
+  user: JwtPayload | null
+): Promise<IOrder | null> => {
+  const result = await Order.findOne({
+    _id: new mongoose.Types.ObjectId(id),
+  }).populate(["cow", "buyer"]);
+  return result;
+};
