@@ -47,6 +47,22 @@ export const getProfile = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+// update profile
+export const updateUserProfile = catchAsync(
+  async (req: Request, res: Response) => {
+    // const { id } = req.params;
+    const updatedData = req.body;
+
+    const result = await updateUserService(req?.user?._id, updatedData);
+
+    reponseFormat<IUser>(res, {
+      statusCode: 200,
+      success: true,
+      message: "User updated successfully",
+      data: result,
+    });
+  }
+);
 // update
 export const updateUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
