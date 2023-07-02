@@ -167,13 +167,16 @@ export const getAllOrderService = async (
   }
   // for seller
   else if (user?.role === "seller") {
-    const orders = await Order.find({}).populate({
-      path: "cow",
-      match: { seller: userIdAsObjecId },
-      populate: {
-        path: "seller",
-      },
-    });
+    const orders = await Order.find({})
+      .populate({
+        path: "cow",
+        match: { seller: userIdAsObjecId },
+        populate: {
+          path: "seller",
+          select: "-password",
+        },
+      })
+      .populate({ path: "buyer", select: "-password" });
 
     result = orders.filter((order) => order.cow !== null);
   }
