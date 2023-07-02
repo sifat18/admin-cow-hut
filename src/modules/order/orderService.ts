@@ -109,7 +109,12 @@ export const getAllOrderService = async (
   let userIdAsObjecId = new mongoose.Types.ObjectId(user?._id);
   //  for admin
   if (user?.role === "admin") {
-    result = await Order.find({}).populate(["cow", "buyer"]);
+    result = await Order.find({})
+      .populate({
+        path: "cow",
+        populate: { path: "seller", select: "-password" },
+      })
+      .populate({ path: "buyer", select: "-password" });
   }
   // for buyer
   else if (user?.role === "buyer") {
