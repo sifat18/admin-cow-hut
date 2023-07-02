@@ -16,11 +16,16 @@ export const createUser: RequestHandler = catchAsync(
   async (req: Request, res: Response) => {
     const { ...userData } = req.body;
     const result = await createUserService(userData);
-    reponseFormat<IUser>(res, {
+    let dataWithoutPass;
+    if (result) {
+      const { password, ...rest } = result?._doc;
+      dataWithoutPass = rest;
+    }
+    reponseFormat<Omit<IUser, "password">>(res, {
       success: true,
       statusCode: 200,
       message: "User created successfully !",
-      data: result,
+      data: dataWithoutPass,
     });
   }
 );

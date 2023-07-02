@@ -13,7 +13,7 @@ export const createAdmin: RequestHandler = catchAsync(
     // const { password, ...data } = result;
     let dataWithoutPass;
     if (result) {
-      const { password, ...rest } = result;
+      const { password, ...rest } = result?._doc;
       dataWithoutPass = rest;
     }
     reponseFormat<Omit<IAdmin, "password">>(res, {
