@@ -187,9 +187,19 @@ export const getAllOrderService = async (
 export const getSingleOrderService = async (
   id: string,
   user: JwtPayload | null
-): Promise<IOrder | null> => {
-  const result = await Order.findOne({
-    _id: new mongoose.Types.ObjectId(id),
-  }).populate(["cow", "buyer"]);
+): Promise<IOrder | null | undefined> => {
+  let result;
+  let userIdAsObjecId = new mongoose.Types.ObjectId(user?._id);
+  //  for admin
+  if (user?.role === "admin") {
+    result = await Order.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+    })
+      .populate({
+        path: "cow",
+        populate: { path: "seller", select: "-password" },
+      })
+      .populate({ path: "buyer", select: "-password" });
+  }
   return result;
 };

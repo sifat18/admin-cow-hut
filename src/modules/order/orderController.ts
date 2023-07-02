@@ -36,8 +36,8 @@ export const getAllOrders = catchAsync(async (req: Request, res: Response) => {
 // get 1
 export const singleOrder = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  let result;
-  result = await getSingleOrderService(id, req.user);
+
+  const result = await getSingleOrderService(id, req.user);
 
   reponseFormat<IOrder>(res, {
     statusCode: 200,
