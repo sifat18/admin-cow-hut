@@ -12,7 +12,10 @@ export const getAllUserService = async (): Promise<IUser[] | null> => {
 export const getSingleUserService = async (
   id: string
 ): Promise<IUser | null> => {
-  const result = await User.findOne({ _id: new mongoose.Types.ObjectId(id) });
+  const result = await User.findOne(
+    { _id: new mongoose.Types.ObjectId(id) },
+    { password: 0 }
+  );
   return result;
 };
 // update
