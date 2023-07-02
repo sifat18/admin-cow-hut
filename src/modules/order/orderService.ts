@@ -200,6 +200,19 @@ export const getSingleOrderService = async (
         populate: { path: "seller", select: "-password" },
       })
       .populate({ path: "buyer", select: "-password" });
+  } else if (user?.role === "buyer") {
+    result = await Order.findOne({
+      _id: new mongoose.Types.ObjectId(id),
+    })
+      .populate({
+        path: "cow",
+        populate: { path: "seller", select: "-password" },
+      })
+      .populate({ path: "buyer", select: "-password" });
+    const { buyer } = result;
+    if (!buyer.equals(userIdAsObjecId)) {
+      throw new APIError(403, "Forbidden");
+    }
   }
   return result;
 };
