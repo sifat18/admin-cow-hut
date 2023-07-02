@@ -35,6 +35,18 @@ export const getSingleUser = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+// single user profile
+export const getProfile = catchAsync(async (req: Request, res: Response) => {
+  const result = await getSingleUserService(req?.user?._id);
+
+  reponseFormat<IUser>(res, {
+    statusCode: 200,
+    success: true,
+    message: "User's information retrieved successfully",
+    data: result,
+  });
+});
 // update
 export const updateUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
