@@ -10,8 +10,8 @@ export type IUser = {
   password: string;
   phoneNumber: string;
   address: string;
-  budget?: number;
-  income?: number;
+  budget: number;
+  income: number;
 };
 export type UserModel = {
   isUserExist(phoneNumber: number): Promise<IUser>;

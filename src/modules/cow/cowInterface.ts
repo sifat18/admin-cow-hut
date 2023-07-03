@@ -21,7 +21,7 @@ export type ICow = {
   breed: string;
   label: "for sale" | "sold out";
   category: ICategory;
-  seller?: Types.ObjectId;
+  seller: Types.ObjectId | IUser;
 };
 export type CowModel = Model<ICow, Record<string, unknown>>;
 export type ICowFilters = {

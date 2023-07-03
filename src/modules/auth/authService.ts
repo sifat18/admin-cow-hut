@@ -13,8 +13,10 @@ import { User } from "../user/userModel";
 // creating user
 export const createUserService = async (user: IUser): Promise<IUser | null> => {
   if (user.role === "buyer") {
+    user.income = 0;
+
     if (!user.budget || user.budget <= 0)
-      throw new APIError(400, "Buyser must provide a valid budget");
+      throw new APIError(400, "Buyer must provide a valid budget");
   } else if (user.role === "seller") {
     user.income = 0;
     user.budget = 0;

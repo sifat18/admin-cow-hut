@@ -5,8 +5,8 @@ import { Cow } from "../cow/cowModel";
 
 export const orderSchema = new Schema<IOrder, OrderModel>(
   {
-    cow: { type: Schema.Types.ObjectId, ref: Cow },
-    buyer: { type: Schema.Types.ObjectId, ref: User },
+    cow: { type: Schema.Types.ObjectId, ref: Cow, required: true },
+    buyer: { type: Schema.Types.ObjectId, ref: User, required: true },
   },
   {
     timestamps: true,

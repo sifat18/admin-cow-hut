@@ -2,7 +2,7 @@ import mongoose, { Types } from "mongoose";
 import { ICow } from "../cow/cowInterface";
 import { Cow } from "../cow/cowModel";
 import { IUser } from "../user/userInterface";
-import { IOrder } from "./orderInterface";
+import { IOrder, IUserInterfaceWithId } from "./orderInterface";
 import APIError from "../../errorHelpers/APIError";
 import { User } from "../user/userModel";
 import { Order } from "./orderModel";
@@ -55,10 +55,15 @@ export const createOrderService = async (
       }
     ).populate("seller");
     // seller income and data update:
-    let income = latestCowData?.seller?.income + cowInfo.price;
+    let income =
+      (latestCowData?.seller as IUserInterfaceWithId)?.income + cowInfo.price;
 
     const latestSellerData = await User.findOneAndUpdate(
-      { _id: new mongoose.Types.ObjectId(latestCowData?.seller?._id) },
+      {
+        _id: new mongoose.Types.ObjectId(
+          (latestCowData?.seller as IUserInterfaceWithId)?._id
+        ),
+      },
       { income },
       {
         new: true,
@@ -96,7 +101,12 @@ export const createOrderService = async (
   if (newOrderAllData) {
     newOrderAllData = await Order.findOne({
       _id: new mongoose.Types.ObjectId(newOrderAllData._id),
-    }).populate(["cow", "buyer"]);
+    })
+      .populate({
+        path: "cow",
+        populate: { path: "seller", select: "-password" },
+      })
+      .populate({ path: "buyer", select: "-password" });
   }
 
   return newOrderAllData;
@@ -211,8 +221,8 @@ export const getSingleOrderService = async (
         populate: { path: "seller", select: "-password" },
       })
       .populate({ path: "buyer", select: "-password" });
-    const { buyer } = result;
-    if (!buyer.equals(userIdAsObjecId)) {
+    const { buyer } = result as IOrder;
+    if (!(buyer as Types.ObjectId).equals(userIdAsObjecId)) {
       throw new APIError(403, "Forbidden");
     }
   }
@@ -226,7 +236,10 @@ export const getSingleOrderService = async (
         populate: { path: "seller", select: "-password" },
       })
       .populate({ path: "buyer", select: "-password" });
-    if (result?.cow?.seller && !result?.cow?.seller.equals(userIdAsObjecId)) {
+    if (
+      (result?.cow as ICow)?.seller &&
+      !((result?.cow as ICow)?.seller as Types.ObjectId).equals(userIdAsObjecId)
+    ) {
       throw new APIError(403, "Forbidden");
     }
   }

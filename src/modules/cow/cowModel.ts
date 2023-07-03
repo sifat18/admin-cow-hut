@@ -40,7 +40,7 @@ export const cowSchema = new Schema<ICow, CowModel>(
       required: true,
     },
 
-    seller: { type: Schema.Types.ObjectId, ref: User },
+    seller: { type: Schema.Types.ObjectId, ref: User, required: true },
   },
   {
     timestamps: true,
